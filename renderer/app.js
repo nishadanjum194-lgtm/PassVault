@@ -4,10 +4,10 @@ const status=$('#status'); const auth=$('#auth'); const main=$('#main'); const l
 async function renderAuth(){
   const exists=await window.pv.exists();
   if(exists){
-    auth.innerHTML=`<div class="card"><h3>Unlock</h3><div class="row"><input type="password" id="mp" placeholder="Master password"><button id="unlock">Unlock</button></div></div>`;
+    auth.innerHTML=`<div class="glass card authbox"><div class="tag">Encrypted Vault</div><h2>Unlock</h2><p>Enter your master password.</p><div class="row"><input type="password" id="mp" placeholder="Master password"><button id="unlock">Unlock</button></div></div>`;
     $('#unlock').onclick=async()=>{try{await window.pv.unlock($('#mp').value); status.textContent='unlocked'; showMain();}catch(e){alert(e.message);}};
   } else {
-    auth.innerHTML=`<div class="card"><h3>Create Vault</h3><div class="row"><input type="password" id="mp" placeholder="Master password"><button id="create">Create</button></div></div>`;
+    auth.innerHTML=`<div class="glass card authbox"><div class="tag">New Vault</div><h2>Create Vault</h2><p>Choose a strong master password. It is never stored.</p><div class="row"><input type="password" id="mp" placeholder="Master password"><button id="create">Create</button></div></div>`;
     $('#create').onclick=async()=>{try{await window.pv.create($('#mp').value); status.textContent='vault created'; showMain();}catch(e){alert(e.message);}};
   }
 }

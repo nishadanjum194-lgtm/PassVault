@@ -1,32 +1,39 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><title>PassVault</title>
 <style>
-:root{--bg:#0b0f19;--card:#141a2a;--accent:#7c5cff;--text:#eef2ff;--muted:#9aa4c7;--border:#2a324a}
+:root{--bg:#0a0e1a;--text:#eef2ff;--muted:#9aa4c7;--border:rgba(255,255,255,.12);--glass:rgba(255,255,255,.06);--accent:#8a72ff;--accent2:#5dd6ff}
 *{box-sizing:border-box}
-body{font-family:-apple-system,'SF Pro Text',system-ui,sans-serif;margin:0;background:radial-gradient(1200px 600px at 10% -10%,#1b2240,transparent),var(--bg);color:var(--text);min-height:100vh}
-#app{max-width:920px;margin:32px auto;padding:0 20px}
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-h1{font-size:28px;margin:0;background:linear-gradient(90deg,#7c5cff,#5dd6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+body{font-family:-apple-system,'SF Pro Text',system-ui,sans-serif;margin:0;color:var(--text);min-height:100vh;background:radial-gradient(1200px 800px at 20% -10%,#2a2f6b55,transparent),radial-gradient(900px 600px at 90% 110%,#1a4a7a55,transparent),#0a0e1a}
+#app{max-width:960px;margin:36px auto;padding:0 22px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+h1{font-size:30px;margin:0;background:linear-gradient(90deg,#a795ff,#5dd6ff);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.5px}
 #status{color:var(--muted);font-size:12px}
-.card{background:linear-gradient(180deg,#161d30,#101626);padding:16px;border-radius:14px;border:1px solid var(--border);margin:10px 0;box-shadow:0 6px 24px rgba(0,0,0,.25)}
-.row{display:flex;gap:10px;margin:8px 0;align-items:center}
-input{padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0d1220;color:var(--text);flex:1;font-size:14px}
+.glass{background:var(--glass);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.35)}
+.card{padding:18px;margin:12px 0}
+.row{display:flex;gap:10px;margin:8px 0;align-items:center;flex-wrap:wrap}
+input{padding:11px 13px;border-radius:11px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);flex:1;font-size:14px;min-width:140px;transition:border .2s}
 input:focus{outline:none;border-color:var(--accent)}
-button{padding:10px 14px;border-radius:10px;border:0;background:linear-gradient(180deg,#8a72ff,#6a52e6);color:#fff;cursor:pointer;font-weight:600;font-size:13px}
-button.ghost{background:#1a2238;border:1px solid var(--border)}
-button.danger{background:#b93a4a}
-.entry{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+button{padding:10px 16px;border-radius:11px;border:0;background:linear-gradient(180deg,#9a83ff,#6a52e6);color:#fff;cursor:pointer;font-weight:600;font-size:13px;transition:transform .1s}
+button:hover{transform:translateY(-1px)}
+button.ghost{background:rgba(255,255,255,.06);border:1px solid var(--border)}
+button.danger{background:linear-gradient(180deg,#d94a5a,#b93a4a)}
+.entry{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 4px;border-bottom:1px solid var(--border)}
+.entry:last-child{border:0}
 .entry .meta{flex:1}
 .entry .site{font-weight:600;font-size:15px}
 .entry .user{color:var(--muted);font-size:12px}
-.pw{font-family:'SF Mono',monospace;font-size:12px;color:#a9ffb0;background:#0a1510;padding:2px 6px;border-radius:6px}
-.toolbar{display:flex;gap:10px;margin:14px 0;align-items:center}
-#search{max-width:320px}
+.pw{font-family:'SF Mono',monospace;font-size:12px;color:#a9ffb0;background:rgba(0,0,0,.35);padding:3px 7px;border-radius:7px}
+.toolbar{display:flex;gap:10px;margin:14px 0;align-items:center;flex-wrap:wrap}
+#search{max-width:340px}
+.authbox{max-width:420px;margin:80px auto;text-align:center}
+.authbox h2{margin:0 0 6px}
+.authbox p{color:var(--muted);font-size:13px;margin:0 0 18px}
+.tag{display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--border);font-size:11px;color:var(--muted);margin-bottom:14px}
 </style></head><body><div id="app">
 <header><h1>PassVault</h1><span id="status"></span></header>
 <div id="auth"></div>
 <div id="main" style="display:none">
-  <div class="card">
+  <div class="glass card">
     <div class="toolbar">
       <input id="search" placeholder="Search site or username…">
       <button id="showToken" class="ghost">Copy API token</button>
@@ -34,12 +41,12 @@ button.danger{background:#b93a4a}
     <div class="row">
       <input id="site" placeholder="Site (e.g. github.com)">
       <input id="user" placeholder="Username / email">
-      <input id="pass" placeholder="Password">
+      <input id="pass" type="password" placeholder="Password">
       <button id="gen" class="ghost">Generate</button>
       <button id="add">Add</button>
     </div>
   </div>
-  <div class="card" id="list"></div>
+  <div class="glass card" id="list"></div>
 </div>
 </div>
 <script src="app.js"></script></body></html>

@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "PassVault",
+  "version": "0.1",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:47823/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "passvault@anjum",
+      "strict_min_version": "109.0"
+    }
+  }
+}
