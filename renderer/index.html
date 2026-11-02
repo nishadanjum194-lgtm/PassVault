@@ -1,52 +1,56 @@
-<!doctype html>
-<html><head><meta charset="utf-8"><title>PassVault</title>
+<!doctype html><html><head><meta charset="utf-8"><title>PassVault</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0e1a;--text:#eef2ff;--muted:#9aa4c7;--border:rgba(255,255,255,.12);--glass:rgba(255,255,255,.06);--accent:#8a72ff;--accent2:#5dd6ff}
+:root{--bg:#000000;--surface:#0a0a0f;--card:#11111a;--border:rgba(60,255,180,.12);--border2:rgba(60,255,180,.28);--text:#e6f1ff;--muted:#6b7a99;--accent:#3cffb4;--accent2:#6ae0ff;--warn:#ff5c7a}
 *{box-sizing:border-box}
-body{font-family:-apple-system,'SF Pro Text',system-ui,sans-serif;margin:0;color:var(--text);min-height:100vh;background:radial-gradient(1200px 800px at 20% -10%,#2a2f6b55,transparent),radial-gradient(900px 600px at 90% 110%,#1a4a7a55,transparent),#0a0e1a}
-#app{max-width:960px;margin:36px auto;padding:0 22px}
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
-h1{font-size:30px;margin:0;background:linear-gradient(90deg,#a795ff,#5dd6ff);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.5px}
-#status{color:var(--muted);font-size:12px}
-.glass{background:var(--glass);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.35)}
-.card{padding:18px;margin:12px 0}
-.row{display:flex;gap:10px;margin:8px 0;align-items:center;flex-wrap:wrap}
-input{padding:11px 13px;border-radius:11px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);flex:1;font-size:14px;min-width:140px;transition:border .2s}
-input:focus{outline:none;border-color:var(--accent)}
-button{padding:10px 16px;border-radius:11px;border:0;background:linear-gradient(180deg,#9a83ff,#6a52e6);color:#fff;cursor:pointer;font-weight:600;font-size:13px;transition:transform .1s}
-button:hover{transform:translateY(-1px)}
-button.ghost{background:rgba(255,255,255,.06);border:1px solid var(--border)}
-button.danger{background:linear-gradient(180deg,#d94a5a,#b93a4a)}
-.entry{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 4px;border-bottom:1px solid var(--border)}
+body{font-family:'Inter',system-ui,sans-serif;margin:0;color:var(--text);min-height:100vh;background:var(--bg)}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(600px 300px at 0% 0%,rgba(60,255,180,.06),transparent),radial-gradient(600px 300px at 100% 100%,rgba(106,224,255,.06),transparent);pointer-events:none}
+#app{max-width:1080px;margin:40px auto;padding:0 24px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+h1{font-size:22px;margin:0;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:1px;color:var(--accent)}
+h1::before{content:">_ ";color:var(--accent2)}
+#status{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;margin:16px 0;box-shadow:0 0 0 1px rgba(60,255,180,.03) inset}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:10px 0;align-items:center}
+input{padding:11px 14px;border-radius:6px;border:1px solid var(--border);background:#0c0c14;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;min-width:0;transition:border .2s,box-shadow .2s}
+input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(60,255,180,.18)}
+button{padding:10px 16px;border-radius:6px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;letter-spacing:.5px;transition:background .2s,box-shadow .2s}
+button:hover{background:var(--accent);color:#000;box-shadow:0 0 18px rgba(60,255,180,.35)}
+button.ghost{border-color:var(--border2);color:var(--accent2)}
+button.ghost:hover{background:var(--accent2);color:#000}
+button.danger{border-color:var(--warn);color:var(--warn)}
+button.danger:hover{background:var(--warn);color:#000}
+.entry{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
 .entry:last-child{border:0}
-.entry .meta{flex:1}
-.entry .site{font-weight:600;font-size:15px}
-.entry .user{color:var(--muted);font-size:12px}
-.pw{font-family:'SF Mono',monospace;font-size:12px;color:#a9ffb0;background:rgba(0,0,0,.35);padding:3px 7px;border-radius:7px}
-.toolbar{display:flex;gap:10px;margin:14px 0;align-items:center;flex-wrap:wrap}
-#search{max-width:340px}
-.authbox{max-width:420px;margin:80px auto;text-align:center}
-.authbox h2{margin:0 0 6px}
-.authbox p{color:var(--muted);font-size:13px;margin:0 0 18px}
-.tag{display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--border);font-size:11px;color:var(--muted);margin-bottom:14px}
+.entry .site{font-weight:600;font-size:14px;font-family:'JetBrains Mono',monospace}
+.entry .user{color:var(--muted);font-size:11px;margin-top:2px}
+.pw{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);background:rgba(60,255,180,.06);border:1px solid var(--border);padding:4px 8px;border-radius:4px}
+.toolbar{display:grid;grid-template-columns:1fr auto;gap:10px;margin:14px 0;align-items:center}
+#search{max-width:360px}
+.authbox{max-width:440px;margin:90px auto;text-align:left}
+.authbox h2{margin:0 0 6px;font-family:'JetBrains Mono',monospace;font-size:18px}
+.authbox p{color:var(--muted);font-size:12px;margin:0 0 18px}
+.tag{display:inline-block;padding:3px 9px;border-radius:4px;background:rgba(60,255,180,.06);border:1px solid var(--border);font-size:10px;color:var(--accent);margin-bottom:14px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+@media(max-width:720px){.toolbar{grid-template-columns:1fr}#search{max-width:100%}}
 </style></head><body><div id="app">
-<header><h1>PassVault</h1><span id="status"></span></header>
+<header><h1>PASSVAULT</h1><span id="status"></span></header>
 <div id="auth"></div>
 <div id="main" style="display:none">
-  <div class="glass card">
+  <div class="card">
     <div class="toolbar">
-      <input id="search" placeholder="Search site or username…">
-      <button id="showToken" class="ghost">Copy API token</button>
+      <input id="search" placeholder="SEARCH SITE OR USERNAME…">
+      <button id="showToken" class="ghost">COPY API TOKEN</button>
     </div>
     <div class="row">
-      <input id="site" placeholder="Site (e.g. github.com)">
-      <input id="user" placeholder="Username / email">
-      <input id="pass" type="password" placeholder="Password">
-      <button id="gen" class="ghost">Generate</button>
-      <button id="add">Add</button>
+      <input id="site" placeholder="SITE (e.g. github.com)">
+      <input id="user" placeholder="USERNAME / EMAIL">
+      <input id="pass" type="password" placeholder="PASSWORD">
+      <button id="gen" class="ghost">GENERATE</button>
+      <button id="add">ADD ENTRY</button>
     </div>
   </div>
-  <div class="glass card" id="list"></div>
+  <div class="grid"><div class="card" id="list"></div></div>
 </div>
 </div>
 <script src="app.js"></script></body></html>
