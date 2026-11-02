@@ -64,7 +64,7 @@ ipcMain.handle('vault:generate', (e, opts) => {
 });
 
 function createWindow(){
-  const win=new BrowserWindow({width:900,height:640,webPreferences:{preload:path.join(__dirname,'preload.js'),contextIsolation:true,nodeIntegration:false}});
+  const win=new BrowserWindow({width:900,height:640,icon:path.join(__dirname,'assets','pwd-icon-512.jpg'),webPreferences:{preload:path.join(__dirname,'preload.js'),contextIsolation:true,nodeIntegration:false}});
   win.loadFile('renderer/index.html');
 }
 let apiToken = null;

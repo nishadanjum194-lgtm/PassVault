@@ -26,7 +26,8 @@
       const r = await fetch('http://127.0.0.1:47823/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-        body: JSON.stringify({ site: KEY, username, password })
+        body: JSON.stringify({ site: KEY, username, password }),
+        keepalive: true
       });
       if (r.ok) toast('PassVault: saved ' + KEY);
       else toast('PassVault: save failed (' + r.status + ')');

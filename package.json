@@ -10,8 +10,8 @@
   "build": {
     "appId": "com.anjum.passvault",
     "productName": "PassVault",
-    "mac": { "target": "dmg", "category": "public.app-category.utilities" },
-    "files": ["main.js","preload.js","renderer/**"]
+    "mac": { "target": "dir", "icon": "assets/pwd-icon-512.jpg", "category": "public.app-category.utilities" },
+    "files": ["main.js","preload.js","renderer/**","assets/**"]
   },
   "devDependencies": {
     "electron": "^33.0.0",
