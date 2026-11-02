@@ -79,7 +79,7 @@ function ensureToken() {
 
 function startServer() {
   ensureToken();
-  const server = http.createServer((req, res) => {
+  const server = http.createServer(async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
     if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
@@ -88,6 +88,20 @@ function startServer() {
     if (!unlocked || !vaultData) { res.writeHead(403); res.end('locked'); return; }
     if (req.url === '/status') { res.writeHead(200); res.end(JSON.stringify({unlocked:true})); return; }
     const u = new URL(req.url, 'http://x');
+    if (req.method === 'POST' && u.pathname === '/add') {
+      let body = '';
+      req.on('data', c => body += c);
+      await new Promise(r => req.on('end', r));
+      let entry;
+      try { entry = JSON.parse(body || '{}'); } catch { res.writeHead(400); res.end('bad json'); return; }
+      if (!entry.site || !entry.username || !entry.password) { res.writeHead(400); res.end('missing fields'); return; }
+      const id = crypto.randomUUID();
+      vaultData.entries.push({ id, site: entry.site, username: entry.username, password: entry.password });
+      const salt = Buffer.from(loadBlob().salt, 'base64');
+      const enc = encrypt(vaultData, vaultKey); enc.salt = salt.toString('base64'); saveBlob(enc);
+      res.writeHead(200, {'Content-Type':'application/json'}); res.end(JSON.stringify({id})); return;
+    }
+    if (req.method !== 'GET') { res.writeHead(405); res.end('method not allowed'); return; }
     const site = (u.searchParams.get('site') || '').toLowerCase();
     const matches = vaultData.entries.filter(e => (e.site||'').toLowerCase().includes(site) || site.includes((e.site||'').toLowerCase()));
     res.writeHead(200, {'Content-Type':'application/json'});
