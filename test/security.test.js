@@ -12,10 +12,11 @@ test('validates credential records and rejects oversized or incomplete records',
 });
 
 test('generates passwords of requested length from the configured alphabet', () => {
+  const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+';
   for (const length of [12, 20, 64, 128]) {
     const password = generatePassword(length);
     assert.equal(password.length, length);
-    assert.match(password, /^[a-zA-Z0-9!@#$%^&*()\\-_=+]+$/);
+    assert.ok([...password].every((character) => alphabet.includes(character)));
   }
 });
 
