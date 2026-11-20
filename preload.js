@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('pv', {
   add: (e) => ipcRenderer.invoke('vault:add', e),
   del: (id) => ipcRenderer.invoke('vault:delete', id),
   gen: (o) => ipcRenderer.invoke('vault:generate', o),
-  token: () => ipcRenderer.invoke('vault:token')
+  token: () => ipcRenderer.invoke('vault:token'),
+  onLocked: (callback) => ipcRenderer.on('vault:locked', () => callback())
 });
 EOF
