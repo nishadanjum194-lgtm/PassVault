@@ -117,4 +117,8 @@ $('#add').addEventListener('click', async () => {
     await refresh();
   } catch (error) { alert(error.message); }
 });
+window.pv.onLocked(() => {
+  status.textContent = 'locked';
+  renderAuth().catch((error) => { status.textContent = error.message; });
+});
 renderAuth().catch((error) => { status.textContent = error.message; });
