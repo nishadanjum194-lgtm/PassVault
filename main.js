@@ -32,6 +32,7 @@ function decrypt(blob, key) {
 }
 function loadBlob() {
   if (!fs.existsSync(VAULT_PATH)) return null;
+  try { fs.chmodSync(VAULT_PATH, 0o600); } catch (_error) {}
   return JSON.parse(fs.readFileSync(VAULT_PATH, 'utf8'));
 }
 function saveBlob(blob) {
@@ -137,6 +138,7 @@ ipcMain.handle('vault:generate', (_event, opts) => {
 function ensureToken() {
   if (apiToken) return;
   if (fs.existsSync(TOKEN_PATH)) {
+    try { fs.chmodSync(TOKEN_PATH, 0o600); } catch (_error) {}
     apiToken = fs.readFileSync(TOKEN_PATH, 'utf8').trim();
   } else {
     apiToken = crypto.randomBytes(32).toString('hex');
