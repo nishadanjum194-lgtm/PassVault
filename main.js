@@ -57,11 +57,16 @@ function persistVault() {
   encrypted.salt = existing.salt;
   saveBlob(encrypted);
 }
-function lockVault() {
+function lockVault(notify = true) {
   if (vaultKey) vaultKey.fill(0);
   vaultKey = null;
   vaultData = null;
   lastActivity = 0;
+  if (notify) {
+    for (const window of BrowserWindow.getAllWindows()) {
+      if (!window.isDestroyed() && !window.webContents.isDestroyed()) window.webContents.send('vault:locked');
+    }
+  }
 }
 function touch() { assertUnlocked(); }
 
@@ -231,6 +236,6 @@ app.whenReady().then(() => { startServer(); createWindow(); });
 setInterval(() => {
   if (vaultData && lastActivity && Date.now() - lastActivity > AUTO_LOCK_MS) lockVault();
 }, 15000).unref();
-app.on('window-all-closed', () => { if (process.platform !== 'darwin') { lockVault(); app.quit(); } });
-app.on('before-quit', lockVault);
+app.on('window-all-closed', () => { if (process.platform !== 'darwin') { lockVault(false); app.quit(); } });
+app.on('before-quit', () => lockVault(false));
 app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
