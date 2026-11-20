@@ -1,43 +1,74 @@
-// Auto-capture credentials on form submit and save to PassVault.
+// Offer to save submitted login credentials to the local PassVault app.
 (function () {
+  const extensionApi = typeof browser !== 'undefined' ? browser : chrome;
   const KEY = (location.hostname || 'page').toLowerCase();
 
-  function creds(form) {
-    const inputs = [...form.querySelectorAll('input')];
-    const pass = inputs.find(i => i.type === 'password' && i.value);
-    if (!pass) return null;
-    const user = inputs.find(i => i !== pass && (i.type === 'text' || i.type === 'email' || /user|email|login/i.test(i.name + i.id)) && i.value);
-    return user ? { username: user.value, password: pass.value } : null;
+  function getCredentials(form) {
+    const inputs = Array.from(form.querySelectorAll('input'));
+    const password = inputs.find(input => input.type === 'password' && input.value);
+    if (!password) return null;
+    const username = inputs.find(input =>
+      input !== password &&
+      (input.type === 'text' || input.type === 'email' || /user|email|login/i.test(input.name + input.id)) &&
+      input.value
+    );
+    return username ? { username: username.value, password: password.value } : null;
   }
 
-  function toast(msg) {
-    const d = document.createElement('div');
-    d.textContent = msg;
-    Object.assign(d.style, { position: 'fixed', top: '12px', right: '12px', zIndex: 2147483647, background: '#222', color: '#fff', padding: '8px 12px', borderRadius: '6px', fontSize: '13px' });
-    document.body.appendChild(d);
-    setTimeout(() => d.remove(), 2500);
+  function toast(message) {
+    const element = document.createElement('div');
+    element.textContent = message;
+    Object.assign(element.style, {
+      position: 'fixed', top: '12px', right: '12px', zIndex: 2147483647,
+      background: '#222', color: '#fff', padding: '8px 12px',
+      borderRadius: '6px', fontSize: '13px'
+    });
+    document.body.appendChild(element);
+    setTimeout(() => element.remove(), 2500);
   }
 
   async function save(username, password) {
-    const { token = '' } = await chrome.storage.local.get('token');
-    if (!token) { toast('PassVault: no token set'); return; }
-    if (!confirm('Save password for ' + KEY + ' to PassVault?')) return;
     try {
-      const r = await fetch('http://127.0.0.1:47823/add', {
+      const { token = '' } = await extensionApi.storage.local.get('token');
+      if (!token) { toast('PassVault: open the app and copy its API token into the extension settings.'); return; }
+
+      let existing = false;
+      try {
+        const check = await fetch('http://127.0.0.1:47823/?site=' + encodeURIComponent(KEY), {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (check.ok) {
+          const entries = await check.json();
+          existing = entries.some(entry => entry.username === username);
+        }
+      } catch { /* The desktop app may be closed. */ }
+
+      const prompt = existing
+        ? 'Update the saved password for ' + username + ' on ' + KEY + '?'
+        : 'Save this login for ' + username + ' on ' + KEY + ' to PassVault?';
+      if (!confirm(prompt)) return;
+
+      const response = await fetch('http://127.0.0.1:47823/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
         body: JSON.stringify({ site: KEY, username, password }),
         keepalive: true
       });
-      if (r.ok) toast('PassVault: saved ' + KEY);
-      else toast('PassVault: save failed (' + r.status + ')');
-    } catch (e) { toast('PassVault: ' + e.message); }
+      if (response.ok) {
+        const result = await response.json().catch(() => ({}));
+        toast('PassVault: ' + (result.updated ? 'updated ' : 'saved ') + KEY);
+      } else {
+        toast('PassVault: save failed (' + response.status + ')');
+      }
+    } catch (error) {
+      toast('PassVault: ' + error.message);
+    }
   }
 
-  document.addEventListener('submit', e => {
-    const form = e.target;
-    if (!form || !form.querySelectorAll) return;
-    const c = creds(form);
-    if (c) save(c.username, c.password);
+  document.addEventListener('submit', event => {
+    const form = event.target;
+    if (!form || typeof form.querySelectorAll !== 'function') return;
+    const credentials = getCredentials(form);
+    if (credentials) void save(credentials.username, credentials.password);
   }, true);
 })();

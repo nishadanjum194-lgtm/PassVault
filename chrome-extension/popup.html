@@ -1,6 +1,23 @@
-<!doctype html><html><body style="width:260px;font-family:sans-serif">
-<h3>PassVault</h3>
-<input id="token" placeholder="API token (from app)" style="width:100%"><br><br>
-<button id="save">Save token</button>
-<div id="res"></div>
-<script src="popup.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PassVault Extension</title>
+  <style>
+    body { width: 270px; padding: 14px; box-sizing: border-box; font: 14px system-ui, sans-serif; background: #101018; color: #e6f1ff; }
+    h3 { margin: 0 0 10px; color: #3cffb4; }
+    input { width: 100%; box-sizing: border-box; padding: 9px; background: #08080d; color: inherit; border: 1px solid #42665b; border-radius: 5px; }
+    button { margin-top: 10px; padding: 8px 12px; background: #3cffb4; color: #07110d; border: 0; border-radius: 5px; font-weight: 700; cursor: pointer; }
+    #res { min-height: 2.5em; margin-top: 10px; color: #aab8c9; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h3>PassVault</h3>
+  <label for="token">Local app API token</label>
+  <input id="token" type="password" autocomplete="off" placeholder="Paste token from desktop app">
+  <button id="save" type="button">Save token</button>
+  <div id="res" role="status" aria-live="polite">The extension asks before saving a submitted login.</div>
+  <script src="popup.js"></script>
+</body>
+</html>
