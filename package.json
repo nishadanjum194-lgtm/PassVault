@@ -1,17 +1,19 @@
 {
   "name": "passvault",
   "version": "0.1.0",
-  "description": "Local-only password manager for Anjum",
+  "description": "Local-only encrypted password manager",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "check": "node --check main.js && node --check preload.js && node --check renderer/app.js && node --check chrome-extension/content.js && node --check chrome-extension/popup.js && node --check firefox-extension/content.js && node --check firefox-extension/popup.js",
+    "test": "node --test"
   },
   "build": {
     "appId": "com.anjum.passvault",
     "productName": "PassVault",
     "mac": { "target": "dir", "icon": "assets/ll-512.png", "category": "public.app-category.utilities" },
-    "files": ["main.js","preload.js","renderer/**","assets/**"]
+    "files": ["main.js", "preload.js", "lib/**", "renderer/**", "assets/**"]
   },
   "devDependencies": {
     "electron": "^33.0.0",
